@@ -1,0 +1,27 @@
+# Example flow, draft format. Source: real update failure on CachyOS
+# (lib32-audit held audit at an older version and blocked the update).
+id: lib32-audit-blocks-audit-update
+version: 1
+name:
+  en: Remove outdated 32-bit system libraries
+  de: Veraltete 32-Bit-Systembibliotheken entfernen
+description:
+  en: >-
+    The 32-bit versions of audit, pam and libcap block the update. Nothing on
+    this computer needs them, so they are removed. The normal versions stay.
+  de: >-
+    Die 32-Bit-Versionen von audit, pam und libcap blockieren das Update.
+    Nichts auf diesem Computer benötigt sie, deshalb werden sie entfernt. Die
+    normalen Versionen bleiben installiert.
+match:
+  error: unsatisfied-dependency
+  installed:
+    lib32-audit: "*"
+  blocked: [audit]
+steps:
+  - remove: [lib32-audit, lib32-pam, lib32-libcap]
+    keep: [audit, pam, libcap]
+    only-if-unneeded: true
+  - update: system
+check:
+  installed-not: [lib32-audit]
